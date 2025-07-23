@@ -1,0 +1,38 @@
+{
+  "name": "ds-agent-middleware",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build",
+    "start": "node index.ts",
+    "dev": "nodemon index.ts"
+  },
+  "dependencies": {
+    "@types/pdfjs-dist": "^2.10.378",
+    "@types/unzipper": "^0.10.11",
+    "@types/xml2js": "^0.4.14",
+    "add": "^2.0.6",
+    "axios": "^1.10.0",
+    "canvas": "^3.1.2",
+    "docx": "^9.5.1",
+    "express": "^5.1.0",
+    "fast-xml-parser": "^5.2.5",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.9.1",
+    "multer": "^2.0.2",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "2.12.313",
+    "unzipper": "^0.12.3",
+    "xml2js": "^0.6.2",
+    "yarn": "^1.22.22"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.0.14",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}
