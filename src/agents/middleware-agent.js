@@ -8,33 +8,47 @@ const regex_masker_1 = require("../masking/regex-masker");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const doc_masker_1 = require("../masking/doc-masker");
+const encryption_1 = require("../utils/encryption");
 exports.maskingStrategies = {
-    pdf: (engine, buffer) => engine.handlePDF(buffer),
-    json: (engine, buffer) => engine.mask(buffer.toString("utf-8")),
-    xml: (engine, buffer) => engine.mask(buffer.toString("utf-8")),
-    docx: (engine, buffer) => (0, doc_masker_1.handleDocxMasking)(engine, buffer),
-    // upcoming: docx, xlsx, csv, txt
+    pdf: (engine, buffer, mode) => engine.handlePDF(buffer, mode),
+    json: (engine, buffer, mode) => engine.mask(buffer.toString("utf-8"), mode),
+    xml: (engine, buffer, mode) => engine.mask(buffer.toString("utf-8"), mode),
+    docx: (engine, buffer, mode) => (0, doc_masker_1.handleDocxMasking)(engine, buffer, mode),
+    // upcoming: xlsx,
+    // csv,
+    // txt,
 };
 class MiddlewareAgent {
-    constructor(agentId, apiClient) {
-        this.agentId = agentId;
+    constructor(apiClient) {
         this.apiClient = apiClient;
     }
     static async init(agentId, apiClient) {
-        const agent = new MiddlewareAgent(agentId, apiClient);
+        const agent = new MiddlewareAgent(apiClient);
         await agent.loadConfig(agentId);
         return agent;
     }
     async loadConfig(agentId) {
         this.config = await this.apiClient.getAgentConfig(agentId);
-        this.maskingEngine = new regex_masker_1.MaskingEngine(this.config.regxRules);
+        this.maskingEngine = new regex_masker_1.MaskingEngine(this.config?.regxRules, this.config?.esc);
+    }
+    async encryptData(input) {
+        const content = typeof input === "string" ? input : input.toString("utf-8");
+        const secretKey = this.config.esc;
+        const encrypted = (0, encryption_1.encrypt)(content, secretKey);
+        return encrypted;
     }
     async maskData(filePath) {
-        console.log(filePath);
-        if (!this.config.action.isMask) {
+        console.log(this.config.action);
+        if (!this?.config?.action?.isMask && !this?.config?.action?.isEncrypt) {
             console.log("Masking disabled in config.");
             return fs_1.default.readFileSync(filePath);
         }
+        const mode = this.config.action.isMask
+            ? "mask"
+            : this.config.action.isEncrypt
+                ? "encrypt"
+                : "";
+        console.log(mode);
         const ext = path_1.default.extname(filePath).slice(1).toLowerCase();
         const isDocExtAllowed = this.config.documentFilesExtentions.includes(ext);
         if (!isDocExtAllowed) {
@@ -71,7 +85,7 @@ class MiddlewareAgent {
         // }
         const handler = exports.maskingStrategies[ext];
         if (handler) {
-            maskedBuffer = await handler(this.maskingEngine, fileBuffer);
+            maskedBuffer = await handler(this.maskingEngine, fileBuffer, mode);
         }
         return maskedBuffer;
     }

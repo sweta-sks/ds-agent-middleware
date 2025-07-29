@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MaskingEngine = void 0;
 const pdf_lib_1 = require("pdf-lib");
 const pdfjsLib = __importStar(require("pdfjs-dist/legacy/build/pdf.js"));
+const encryption_1 = require("../utils/encryption");
 const fontMapping = {
     Courier: pdf_lib_1.StandardFonts.Courier,
     Helvetica: pdf_lib_1.StandardFonts.Helvetica,
@@ -57,19 +58,21 @@ const fontMapping = {
     Default: pdf_lib_1.StandardFonts.Helvetica,
 };
 class MaskingEngine {
-    constructor(rules) {
+    constructor(rules, secreKey) {
         this.rules = rules;
+        this.secreKey = secreKey;
     }
-    async mask(data) {
+    async mask(data, mode) {
         let maskedText = data;
         for (const rule of this.rules) {
             try {
                 const regex = new RegExp(rule.pattern, "g");
                 maskedText = maskedText.replace(regex, (...args) => {
                     const match = args[0];
-                    const groups = args.slice(1, -2).filter(Boolean); // Remove undefined entries
-                    console.log(`[Rule: ${rule.name}] Match:`, match);
-                    console.log(`Groups:`, groups);
+                    const groups = args.slice(1, -2).filter(Boolean);
+                    if (mode === "encrypt") {
+                        return (0, encryption_1.encrypt)(match, this.secreKey);
+                    }
                     if (rule.name === "Email" && groups.length === 3) {
                         const [start, end, domain] = groups;
                         const middleLen = match.indexOf("@") - start.length - end.length;
@@ -81,7 +84,7 @@ class MaskingEngine {
                     }
                     if (groups.length >= 2) {
                         const prefix = groups[0];
-                        const suffix = groups[groups.length - 1]; // last group
+                        const suffix = groups[groups.length - 1];
                         const middleLen = match.length - prefix.length - suffix.length;
                         const maskedMiddle = rule.maskWith.repeat(Math.max(middleLen, 1));
                         return `${prefix}${maskedMiddle}${suffix}`;
@@ -95,10 +98,14 @@ class MaskingEngine {
         }
         return maskedText;
     }
-    async handlePDF(existingPdfBytes) {
+    async handlePDF(existingPdfBytes, mode) {
         try {
             const pdfDoc = await pdf_lib_1.PDFDocument.load(existingPdfBytes);
-            const loadingTask = pdfjsLib.getDocument({ data: existingPdfBytes });
+            console.log(mode);
+            const loadingTask = pdfjsLib.getDocument({
+                data: existingPdfBytes,
+                useSystemFonts: true,
+            });
             const pdf = await loadingTask.promise;
             const helveticaFont = await pdfDoc.embedFont(pdf_lib_1.StandardFonts.Helvetica);
             for (let i = 0; i < pdfDoc.getPageCount(); i++) {
@@ -108,7 +115,7 @@ class MaskingEngine {
                 const content = await pdfjsPage.getTextContent();
                 for (const item of content.items) {
                     const originalText = item.str;
-                    const maskedText = await this.mask(originalText);
+                    const maskedText = await this.mask(originalText, mode);
                     if (originalText === maskedText)
                         continue;
                     const [a, b, c, d, e, f] = item.transform;

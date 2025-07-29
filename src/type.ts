@@ -7,6 +7,7 @@ export type MaskConfig = {
     isFullMask: boolean;
     maskWith: string;
   }[];
+  esc: string;
 };
 
 export type AgentConfig = {

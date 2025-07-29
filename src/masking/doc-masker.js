@@ -39,18 +39,13 @@ const xml2js_1 = require("xml2js");
 const stream = __importStar(require("stream"));
 const util_1 = require("util");
 const streamPipeline = (0, util_1.promisify)(stream.pipeline);
-/**
- * Preserves all content including images, tables, and formatting while masking text.
- */
-async function handleDocxMasking(engine, buffer) {
+async function handleDocxMasking(engine, buffer, mode) {
     const zip = await JSZip.loadAsync(buffer);
     const docXmlPath = "word/document.xml";
     const xmlData = await zip.file(docXmlPath)?.async("string");
     if (!xmlData)
         throw new Error("document.xml not found");
-    // Parse XML to JS object
     const parsed = await (0, xml2js_1.parseStringPromise)(xmlData);
-    // Mask all <w:t> (text) nodes
     const maskTextNodes = async (node) => {
         if (typeof node !== "object" || node === null)
             return;
@@ -60,16 +55,15 @@ async function handleDocxMasking(engine, buffer) {
                     const item = node[key][i];
                     // Case: plain text
                     if (typeof item === "string") {
-                        node[key][i] = await engine.mask(item);
+                        node[key][i] = await engine.mask(item, mode);
                     }
                     // Case: object with "_" (actual text content)
                     else if (typeof item === "object" && item._) {
-                        item._ = await engine.mask(item._);
+                        item._ = await engine.mask(item._, mode);
                     }
                 }
             }
             else {
-                // Traverse deeper
                 const children = Array.isArray(node[key]) ? node[key] : [node[key]];
                 for (const child of children) {
                     await maskTextNodes(child);
@@ -78,12 +72,9 @@ async function handleDocxMasking(engine, buffer) {
         }
     };
     await maskTextNodes(parsed);
-    // Convert JS object back to XML
     const builder = new xml2js_1.Builder();
     const modifiedXml = builder.buildObject(parsed);
-    // Replace the document.xml content with masked content
     zip.file(docXmlPath, modifiedXml);
-    // Repack as a new .docx
     const newBuffer = await zip.generateAsync({ type: "nodebuffer" });
     return newBuffer;
 }
