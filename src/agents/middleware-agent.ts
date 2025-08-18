@@ -1,4 +1,4 @@
-import { AgentConfig, MaskConfig } from "../type";
+import { AgentConfig, MaskConfig } from "../utils/type";
 import { MaskingEngine } from "../masking/regex-masker";
 import { DSAgentClient } from "../api/ds-agent-client";
 import fs from "fs";

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AgentConfig } from "../type";
+import { AgentConfig } from "../utils/type";
 import crypto from "crypto";
 import os from "os";
 import { promises as fs } from "fs";

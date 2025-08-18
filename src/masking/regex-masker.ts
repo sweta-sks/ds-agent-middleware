@@ -1,4 +1,4 @@
-import { RegxRule } from "../type";
+import { RegxRule } from "../utils/type";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";

@@ -110,7 +110,7 @@ async function syncLogger() {
         const reportFrequency = agent?.resultData?.reportFrequency ?? 0.2;
         if (!agentId)
             continue;
-        const intervalMs = 10 * 1000;
+        const intervalMs = reportFrequency * 10 * 1000;
         if (activeIntervals[agentId]) {
             clearInterval(activeIntervals[agentId]);
             console.log(`Cleared previous interval for ${agentId}`);
