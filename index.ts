@@ -1,7 +1,5 @@
 import express, { urlencoded } from "express";
 import multer from "multer";
-import { DSAgentClient } from "./src/api/ds-agent-client";
-import { loggerMiddleware } from "./src/middleware/logger";
 import { MiddlewareAgent } from "./src/agents/middleware-agent";
 import fs from "fs";
 import path from "path";
@@ -11,9 +9,6 @@ const PORT = 3000;
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(express.json());
-
-const apiClient = new DSAgentClient("https://access.axiomprotect.com:6653");
-// const apiClient = new DSAgentClient("http://localhost:3000");
 
 app.get("/api/upload/:filename", async (req, res) => {
   try {
@@ -25,7 +20,7 @@ app.get("/api/upload/:filename", async (req, res) => {
     }
     // OSEND-20250725-5274
     // OSEND-20250718-9267
-    const agent = await MiddlewareAgent.init("OSEND-20250725-5274", apiClient);
+    const agent = await MiddlewareAgent.init("MWARE-20250814-6386");
     const maskedData = await agent.maskData(filePath);
 
     const fileExt = path.extname(filename).toLowerCase();
@@ -88,15 +83,15 @@ app.get("/data", (req, res) => {
 //     res.status(500).send("Internal Server Error");
 //   }
 // });
-app.post(
-  "/test-upload",
-  loggerMiddleware,
-  upload.single("file"),
-  (req, res) => {
-    console.log("File received:", req.file?.originalname);
-    res.send("Middleware passed. File received.");
-  }
-);
+// app.post(
+//   "/test-upload",
+//   loggerMiddleware,
+//   upload.single("file"),
+//   (req, res) => {
+//     console.log("File received:", req.file?.originalname);
+//     res.send("Middleware passed. File received.");
+//   }
+// );
 
 app.post("/AxiomProtect/v1/dsagent/authenticate", (req, res) => {
   // const { accountId, agentId } = req.query;
@@ -113,8 +108,8 @@ app.post("/AxiomProtect/v1/dsagent/authenticate", (req, res) => {
         deviceIp: "2402:e280:3e2f:207:6835:5897:482d:10e0",
         deviceId: "b16b41850fd4d5b498bd6b378686dabd",
       },
-      agentId: "MWARE-20250714-1860",
-      syncFrequency: 10,
+      agentId: "MWARE-20250714-186",
+      syncFrequency: 0.2,
       configurations: {
         action: {
           isMask: true,
@@ -142,7 +137,15 @@ app.post("/AxiomProtect/v1/dsagent/authenticate", (req, res) => {
         logFolders: ["C:\\Office\\Demo\\logs", "C:\\Office\\Demo\\logs2"],
         logFilesExtentions: ["log"],
         documentFolders: ["C:\\Office\\Demo\\docs"],
-        documentFilesExtentions: ["pdf", "docx", "xml", "json"],
+        documentFilesExtentions: [
+          "pdf",
+          "docx",
+          "xml",
+          "json",
+          "xlsx",
+          "csv",
+          "txt",
+        ],
         documentOutputFolders: ["C:\\Office\\Demo\\docsop"],
       },
       updatedOn: 1752490993000,
@@ -151,7 +154,7 @@ app.post("/AxiomProtect/v1/dsagent/authenticate", (req, res) => {
       platform: "windows",
       accountId: "8797893D-7F0D-4B5F-9F6E-DE1706BC33D0",
       name: "Middleware Service Agent",
-      reportFrequency: 0,
+      reportFrequency: 9,
       status: 1,
     },
     resultCode: 0,

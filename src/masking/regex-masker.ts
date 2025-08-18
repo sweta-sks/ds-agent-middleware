@@ -70,5 +70,75 @@ export class MaskingEngine {
     return maskedText;
   }
 
- 
+  async handlePDF(existingPdfBytes: Buffer, mode?: string) {
+    try {
+      const pdfDoc = await PDFDocument.load(existingPdfBytes);
+      console.log(mode);
+      const loadingTask = pdfjsLib.getDocument({
+        data: existingPdfBytes,
+        useSystemFonts: true,
+      });
+      const pdf = await loadingTask.promise;
+
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+      for (let i = 0; i < pdfDoc.getPageCount(); i++) {
+        const page = pdfDoc.getPage(i);
+
+        const pdfjsPage = await pdf.getPage(i + 1);
+        const viewport = pdfjsPage.getViewport({ scale: 1.0 });
+        const content = await pdfjsPage.getTextContent();
+
+        for (const item of content.items as any[]) {
+          const originalText = item.str;
+
+          const maskedText = await this.mask(originalText, mode);
+
+          if (originalText === maskedText) continue;
+
+          const [a, b, c, d, e, f] = item.transform;
+          const fontSize = Math.sqrt(a * a + b * b) || 10;
+          // const textWidth = helveticaFont.widthOfTextAtSize(
+          //   maskedText,
+          //   fontSize
+          // );
+          const textHeight = fontSize;
+
+          //   page.drawRectangle({
+          //     x: e,
+          //     y: f - textHeight * 0.25,
+          //     width: textWidth,
+          //     height: textHeight * 1.2,
+          //     color: rgb(1, 1, 1),
+          //   });
+          const rawFontName = item.fontName || "Helvetica";
+          const mappedFontName =
+            fontMapping[rawFontName] || StandardFonts.Helvetica;
+          const font = await pdfDoc.embedFont(mappedFontName);
+
+          page.drawRectangle({
+            x: e,
+            y: f - textHeight * 0.25,
+            width: item.width,
+            height: item.height,
+            color: rgb(1, 1, 1),
+          });
+
+          page.drawText(maskedText, {
+            x: e,
+            y: f,
+            size: fontSize,
+            font: font,
+            color: rgb(0, 0, 0),
+          });
+        }
+      }
+
+      const maskedPdfBytes = await pdfDoc.save();
+
+      return maskedPdfBytes;
+    } catch (err: any) {
+      console.log(err.message);
+    }
+  }
 }

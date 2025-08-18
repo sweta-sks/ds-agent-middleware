@@ -5,6 +5,9 @@ import fs from "fs";
 import path from "path";
 import { handleDocxMasking } from "../masking/doc-masker";
 import { encrypt } from "../utils/encryption";
+import { handleXlsxMasking } from "../masking/xlsx-masker";
+import { handleCsvMasking } from "../masking/csv-masker";
+import { handleTxtMasking } from "../masking/txt";
 export const maskingStrategies: any = {
   pdf: (engine: MaskingEngine, buffer: Buffer, mode?: string) =>
     engine.handlePDF(buffer, mode),
@@ -12,26 +15,28 @@ export const maskingStrategies: any = {
     engine.mask(buffer.toString("utf-8"), mode),
   xml: (engine: MaskingEngine, buffer: Buffer, mode?: string) =>
     engine.mask(buffer.toString("utf-8"), mode),
+  xlsx: (engine: MaskingEngine, buffer: Buffer, mode?: string) =>
+    handleXlsxMasking(engine, buffer, mode),
+  csv: (engine: MaskingEngine, buffer: Buffer, mode?: string) =>
+    handleCsvMasking(engine, buffer, mode),
   docx: (engine: MaskingEngine, buffer: Buffer, mode?: string) =>
     handleDocxMasking(engine, buffer, mode),
-  // upcoming: xlsx,
-  // csv,
-  // txt,
 };
 
 export class MiddlewareAgent {
   private config!: AgentConfig;
   private maskingEngine!: MaskingEngine;
+  private apiClient!: DSAgentClient;
+  private constructor() {}
 
-  private constructor(private readonly apiClient: DSAgentClient) {}
-
-  static async init(agentId: string, apiClient: DSAgentClient) {
-    const agent = new MiddlewareAgent(apiClient);
+  static async init(agentId: string) {
+    const agent = new MiddlewareAgent();
     await agent.loadConfig(agentId);
     return agent;
   }
 
   private async loadConfig(agentId: string) {
+    this.apiClient = new DSAgentClient();
     this.config = await this.apiClient.getAgentConfig(agentId);
     this.maskingEngine = new MaskingEngine(
       this.config?.regxRules,
@@ -46,8 +51,12 @@ export class MiddlewareAgent {
     return encrypted;
   }
   async maskData(filePath: string): Promise<Buffer | string> {
-    console.log(this.config.action);
-    if (!this?.config?.action?.isMask && !this?.config?.action?.isEncrypt) {
+    console.log(this.config?.action);
+    if (
+      !this?.config?.action &&
+      !this?.config?.action?.isMask &&
+      !this?.config?.action?.isEncrypt
+    ) {
       console.log("Masking disabled in config.");
       return fs.readFileSync(filePath);
     }
@@ -108,3 +117,6 @@ export class MiddlewareAgent {
     return maskedBuffer;
   }
 }
+
+// txt: (engine: MaskingEngine, buffer: Buffer, mode?: string) =>
+//   handleTxtMasking(engine, buffer, mode),

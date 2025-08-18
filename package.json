@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "npm run build",
-    "start": "node index.ts",
-    "dev": "nodemon index.ts"
+    "start": "node sample.js",
+    "dev": "nodemon --ignore src/**/*.json index.ts"
   },
   "dependencies": {
     "@types/pdfjs-dist": "^2.10.378",
@@ -16,6 +16,8 @@
     "add": "^2.0.6",
     "axios": "^1.10.0",
     "canvas": "^3.1.2",
+    "csv-parse": "^6.1.0",
+    "csv-stringify": "^6.6.0",
     "docx": "^9.5.1",
     "express": "^5.1.0",
     "fast-xml-parser": "^5.2.5",
@@ -25,6 +27,7 @@
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "2.12.313",
     "unzipper": "^0.12.3",
+    "xlsx": "^0.18.5",
     "xml2js": "^0.6.2",
     "yarn": "^1.22.22"
   },
