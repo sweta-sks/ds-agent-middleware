@@ -1,6 +1,6 @@
 import express, { urlencoded } from "express";
 import multer from "multer";
-import { MiddlewareAgent } from "./src/agents/middleware-agent";
+import MiddlewareAgent from "./src/agents/middleware-agent";
 import fs from "fs";
 import path from "path";
 
@@ -20,7 +20,12 @@ app.get("/api/upload/:filename", async (req, res) => {
     }
     // OSEND-20250725-5274
     // OSEND-20250718-9267
-    const agent = await MiddlewareAgent.init("MWARE-20250814-6386");
+    const agent = await MiddlewareAgent.init({
+      email: "silibay181@namestal.com",
+      accountId: "9EDA8F6D-E884-44CA-835D-5F9B4D2CC7E7",
+      password: "t8IKJxbz",
+      agentId: "MWARE-20250814-6386",
+    });
     const maskedData = await agent.maskData(filePath);
 
     const fileExt = path.extname(filename).toLowerCase();

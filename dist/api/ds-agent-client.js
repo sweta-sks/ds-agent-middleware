@@ -22,7 +22,6 @@ class DSAgentClient {
         const data = await this.getAuthenticateToken(rest);
         const authToken = data.jwt;
         const deviceId = this.generateDeviceId();
-        console.log(data);
         const registerUser = await this.registerUserWithAgent(authToken, {
             agentId,
             deviceId,
@@ -31,7 +30,6 @@ class DSAgentClient {
         const userRegisterConfig = path_1.default.join(__dirname, "userConfig", "user-register.json");
         await fs_1.promises.mkdir(path_1.default.dirname(userRegisterConfig), { recursive: true });
         await fs_1.promises.writeFile(userRegisterConfig, JSON.stringify(registerUser, null, 2), "utf-8");
-        console.log(isUserRegistered);
         if (isUserRegistered) {
             const syncPath = path_1.default.join(__dirname, "sync", "index.json");
             await fs_1.promises.mkdir(path_1.default.dirname(syncPath), { recursive: true });

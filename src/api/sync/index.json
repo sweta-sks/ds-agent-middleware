@@ -3,13 +3,13 @@
     "resultMessage": "DS Agent authenticated successfully.",
     "resultData": {
       "agentId": "MWARE-20250814-6386",
-      "syncFrequency": 10,
+      "syncFrequency": 1,
       "configurations": {
         "action": {
           "isMask": true,
           "isEncrypt": false
         },
-        "esc": "null",
+        "esc": "",
         "regxRules": [
           {
             "name": "Email",
@@ -61,29 +61,29 @@
             "isFullMask": true
           }
         ],
-        "logFolders": [
-          ""
-        ],
+        "logFolders": [""],
         "logFilesExtentions": [],
-        "documentFolders": [
-          ""
-        ],
-        "documentFilesExtentions": [],
-        "documentOutputFolders": [
-          ""
-        ]
+        "documentFolders": [""],
+        "documentFilesExtentions": ["json"],
+        "documentOutputFolders": [""]
       },
       "description": "",
-      "updatedOn": 1755176292000,
+      "updatedOn": 1755677351000,
       "type": "middleware_agent",
+      "agentPolicy": {
+        "singleUserSingleDevice": true,
+        "singleUserMultipleAgent": false,
+        "singleUserMultipleDevice": false
+      },
       "createdOn": 1755176292000,
       "platform": "windows",
       "accountId": "9EDA8F6D-E884-44CA-835D-5F9B4D2CC7E7",
       "name": "abcd",
-      "reportFrequency": 10,
-      "status": 1
+      "reportFrequency": 1,
+      "status": 1,
+      "deviceId": "3484d76dd6cd2cdd8359418566621614e5eacbe8d4fb425c6a0fd04585338a8b"
     },
     "resultCode": 0,
-    "timestamp": "2025-08-15 02:06:19"
+    "timestamp": "2025-08-22 02:41:08"
   }
 }

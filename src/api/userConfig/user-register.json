@@ -1,0 +1,9 @@
+{
+  "resultMessage": "This user has already been registered with the same device for this agent.",
+  "resultData": {
+    "esc": null,
+    "isUserRegistered": false
+  },
+  "resultCode": 0,
+  "timestamp": "2025-08-22 02:41:25"
+}

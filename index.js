@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const multer_1 = __importDefault(require("multer"));
-const middleware_agent_1 = require("./src/agents/middleware-agent");
+const middleware_agent_1 = __importDefault(require("./src/agents/middleware-agent"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
@@ -21,7 +21,12 @@ app.get("/api/upload/:filename", async (req, res) => {
         }
         // OSEND-20250725-5274
         // OSEND-20250718-9267
-        const agent = await middleware_agent_1.MiddlewareAgent.init("MWARE-20250814-6386");
+        const agent = await middleware_agent_1.default.init({
+            email: "silibay181@namestal.com",
+            accountId: "9EDA8F6D-E884-44CA-835D-5F9B4D2CC7E7",
+            password: "t8IKJxbz",
+            agentId: "MWARE-20250814-6386",
+        });
         const maskedData = await agent.maskData(filePath);
         const fileExt = path_1.default.extname(filename).toLowerCase();
         // if (filename.endsWith(".json")) {

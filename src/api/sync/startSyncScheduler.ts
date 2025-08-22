@@ -15,7 +15,6 @@ export async function loadSyncData(): Promise<Record<string, any>> {
 }
 
 export async function startSyncScheduler(agentId?: string) {
-  console.log("[🕒] Starting DS Agent Sync Scheduler...");
   const client = new DSAgentClient();
   const activeIntervals: Record<string, NodeJS.Timeout> = {};
 
@@ -43,7 +42,7 @@ export async function startSyncScheduler(agentId?: string) {
 
     activeIntervals[agentId] = setInterval(async () => {
       try {
-        console.log(`[🔄] Syncing config for agent: ${agentId}`);
+        console.log(`[🔄] Syncing change config for agent: ${agentId}`);
         await client.getSyncConfig(agentId);
       } catch (err) {
         console.error(

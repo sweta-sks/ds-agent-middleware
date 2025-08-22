@@ -8,6 +8,13 @@ import { encrypt } from "../utils/encryption";
 import { handleXlsxMasking } from "../masking/xlsx-masker";
 import { handleCsvMasking } from "../masking/csv-masker";
 import { handleTxtMasking } from "../masking/txt";
+
+export interface userConfig {
+  email: string;
+  accountId: string;
+  password: string;
+  agentId: string;
+}
 export const maskingStrategies: any = {
   pdf: (engine: MaskingEngine, buffer: Buffer, mode?: string) =>
     engine.handlePDF(buffer, mode),
@@ -23,21 +30,22 @@ export const maskingStrategies: any = {
     handleDocxMasking(engine, buffer, mode),
 };
 
-export class MiddlewareAgent {
+export default class MiddlewareAgent {
   private config!: AgentConfig;
   private maskingEngine!: MaskingEngine;
   private apiClient!: DSAgentClient;
   private constructor() {}
 
-  static async init(agentId: string) {
+  static async init(body: userConfig) {
     const agent = new MiddlewareAgent();
-    await agent.loadConfig(agentId);
+    await agent.loadConfig(body);
+    console.log(body);
     return agent;
   }
 
-  private async loadConfig(agentId: string) {
+  private async loadConfig(body: userConfig) {
     this.apiClient = new DSAgentClient();
-    this.config = await this.apiClient.getAgentConfig(agentId);
+    this.config = await this.apiClient.getAgentConfig(body);
     this.maskingEngine = new MaskingEngine(
       this.config?.regxRules,
       this.config?.esc
