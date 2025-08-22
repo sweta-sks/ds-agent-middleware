@@ -1,6 +1,6 @@
 {
   "name": "ds-agent-middleware",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Middleware agent for DS-Agent with sync, logging, and masking features.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,6 +12,9 @@
     "sync",
     "logger",
     "masking"
+  ],
+  "files": [
+    "dist"
   ],
   "scripts": {
     "build": "tsc",

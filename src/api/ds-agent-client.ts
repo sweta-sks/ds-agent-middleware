@@ -5,7 +5,7 @@ import os from "os";
 import { promises as fs } from "fs";
 import path from "path";
 import { startSyncScheduler } from "../api/sync/startSyncScheduler";
-import { syncLogger } from "./logger";
+import { syncLogger } from "./logger/index";
 import { userConfig } from "../agents/middleware-agent";
 interface AuthPayload {
   agentId: string;

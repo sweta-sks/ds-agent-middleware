@@ -10,7 +10,7 @@ const os_1 = __importDefault(require("os"));
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
 const startSyncScheduler_1 = require("../api/sync/startSyncScheduler");
-const logger_1 = require("./logger");
+const index_1 = require("./logger/index");
 const USER_CONFIG = path_1.default.join(__dirname, "userConfig", "index.json");
 class DSAgentClient {
     constructor() { }
@@ -44,7 +44,7 @@ class DSAgentClient {
             if (existingSync[agentId]?.resultData?.configurations) {
                 console.log(" Returning config from sync file");
                 await (0, startSyncScheduler_1.startSyncScheduler)(agentId);
-                await (0, logger_1.syncLogger)();
+                await (0, index_1.syncLogger)();
                 return existingSync[agentId].resultData.configurations;
             }
             const { url, requestBody } = await this.payload(agentId);
@@ -64,7 +64,7 @@ class DSAgentClient {
             };
             await fs_1.promises.writeFile(syncPath, JSON.stringify(existingSync, null, 2), "utf-8");
             await (0, startSyncScheduler_1.startSyncScheduler)(agentId);
-            await (0, logger_1.syncLogger)();
+            await (0, index_1.syncLogger)();
             return responseData.resultData?.configurations;
         }
         return;
