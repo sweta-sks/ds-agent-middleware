@@ -51,9 +51,8 @@ export async function updateAgentReport(apiResponse: any) {
 
   const newRules = agentData?.configurations?.regxRules || [];
   const action = agentData?.configurations?.action;
-  console.log({ action });
+
   newRules.forEach((rule: any) => {
-    console.log({ loggerData });
     const index = loggerData?.rules.findIndex((r: any) => r.name === rule.name);
 
     if (index !== -1) {

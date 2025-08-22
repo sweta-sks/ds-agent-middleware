@@ -25,7 +25,6 @@ class MiddlewareAgent {
     static async init(body) {
         const agent = new MiddlewareAgent();
         await agent.loadConfig(body);
-        console.log(body);
         return agent;
     }
     async loadConfig(body) {
@@ -40,7 +39,6 @@ class MiddlewareAgent {
         return encrypted;
     }
     async maskData(filePath) {
-        console.log(this.config?.action);
         if (!this?.config?.action &&
             !this?.config?.action?.isMask &&
             !this?.config?.action?.isEncrypt) {
@@ -52,7 +50,6 @@ class MiddlewareAgent {
             : this.config.action.isEncrypt
                 ? "encrypt"
                 : "";
-        console.log(mode);
         const ext = path_1.default.extname(filePath).slice(1).toLowerCase();
         const isDocExtAllowed = this.config.documentFilesExtentions.includes(ext);
         if (!isDocExtAllowed) {

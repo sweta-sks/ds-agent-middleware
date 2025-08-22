@@ -48,9 +48,7 @@ async function updateAgentReport(apiResponse) {
     });
     const newRules = agentData?.configurations?.regxRules || [];
     const action = agentData?.configurations?.action;
-    console.log({ action });
     newRules.forEach((rule) => {
-        console.log({ loggerData });
         const index = loggerData?.rules.findIndex((r) => r.name === rule.name);
         if (index !== -1) {
             const existing = loggerData.rules[index];

@@ -1,4 +1,12 @@
 {
+  "MWARE-20250822-8703": {
+    "resultMessage": "Authentication failed: device status is not approved.",
+    "resultData": {
+      "deviceId": "3484d76dd6cd2cdd8359418566621614e5eacbe8d4fb425c6a0fd04585338a8b"
+    },
+    "resultCode": -1761109,
+    "timestamp": "2025-08-22 06:14:29"
+  },
   "MWARE-20250814-6386": {
     "resultMessage": "DS Agent authenticated successfully.",
     "resultData": {
@@ -61,11 +69,17 @@
             "isFullMask": true
           }
         ],
-        "logFolders": [""],
+        "logFolders": [
+          ""
+        ],
         "logFilesExtentions": [],
-        "documentFolders": [""],
-        "documentFilesExtentions": ["json"],
-        "documentOutputFolders": [""]
+        "documentFolders": [
+          ""
+        ],
+        "documentFilesExtentions": [],
+        "documentOutputFolders": [
+          ""
+        ]
       },
       "description": "",
       "updatedOn": 1755677351000,
@@ -84,6 +98,6 @@
       "deviceId": "3484d76dd6cd2cdd8359418566621614e5eacbe8d4fb425c6a0fd04585338a8b"
     },
     "resultCode": 0,
-    "timestamp": "2025-08-22 02:41:08"
+    "timestamp": "2025-08-22 06:20:31"
   }
 }
